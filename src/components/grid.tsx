@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CellState } from "../../types/cell-state"
+import { CellState } from "../types/cell-state"
 import { Cell } from "./cell"
 
 type Props = {

@@ -1,4 +1,4 @@
-import { CellState } from "../../types/cell-state"
+import { CellState } from "../types/cell-state"
 
 type Props = {
     state: CellState
