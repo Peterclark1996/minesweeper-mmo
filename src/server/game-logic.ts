@@ -30,12 +30,12 @@ export const buildMines = (rowCount: number, columnCount: number, mineCount: num
     return mines
 }
 
-export const isCellClickable = (grid: CellState[][], row: number, column: number): boolean => {
-    return grid[row][column].type === "hidden"
+export const isCellClickable = (gameState: GameState, row: number, column: number): boolean => {
+    return !gameState.isGameLost && gameState.cells[row][column].type === "hidden"
 }
 
 export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): GameState => {
-    if (!isCellClickable(gameState.cells, row, column)) {
+    if (!isCellClickable(gameState, row, column)) {
         return gameState
     }
 
