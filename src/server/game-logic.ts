@@ -46,7 +46,7 @@ export const isCellClickable = (gameState: GameState, row: number, column: numbe
         return false
     }
 
-    if (gameState.isGameLost) {
+    if (gameState.finishState !== "playing") {
         return false
     }
 
@@ -62,7 +62,7 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
         return {
             ...gameState,
             cells: mines.reduce((cells, mine) => updateGridCellImmutably(cells, mine.x, mine.y, { type: "revealed-mine" }), gameState.cells),
-            isGameLost: true
+            finishState: "lost"
         }
     }
 
@@ -71,7 +71,7 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
     while (true) {
         const nextCellToCheck = unCheckedCells.pop()
         if (nextCellToCheck === undefined) {
-            return { ...gameState, cells: cellsSoFar }
+            return checkIfGameIsWon({ ...gameState, cells: cellsSoFar }, mines)
         }
 
         const adjacentMines = countAdjacentMines(mines, nextCellToCheck.row, nextCellToCheck.column)
@@ -94,6 +94,19 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
             }
         })
     }
+}
+
+const checkIfGameIsWon = (gameState: GameState, mines: Mine[]): GameState => {
+    const remainingTiles = gameState.cells.flat().filter(cell => cell.type === "hidden").length
+
+    if (remainingTiles === mines.length) {
+        return {
+            ...gameState,
+            finishState: "won"
+        }
+    }
+
+    return gameState
 }
 
 const countAdjacentMines = (mines: Mine[], row: number, column: number): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 => {

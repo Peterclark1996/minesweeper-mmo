@@ -4,5 +4,5 @@ export type GameState = {
     rowCount: number
     columnCount: number
     cells: CellState[][]
-    isGameLost: boolean
+    finishState: "won" | "lost" | "playing"
 }

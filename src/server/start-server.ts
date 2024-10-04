@@ -2,6 +2,7 @@ import * as http from "http"
 import { Server as SocketIOServer } from "socket.io"
 import { createServer as createViteServer } from "vite"
 import { ClientToServerEvents } from "../types/client-to-server-events"
+import { GameState } from "../types/game-state"
 import { ServerToClientEvents } from "../types/server-to-client-events"
 import { buildGrid, buildMines, revealCell } from "./game-logic"
 
@@ -18,11 +19,11 @@ export const startServer = async () => {
     const gridSize = 20
     const mines = buildMines(gridSize, gridSize, 40)
 
-    let gameState = {
+    let gameState: GameState = {
         rowCount: gridSize,
         columnCount: gridSize,
         cells: buildGrid(gridSize, gridSize),
-        isGameLost: false
+        finishState: "playing"
     }
 
     io.on("connection", socket => {
