@@ -2,6 +2,17 @@ import { CellState } from "../types/cell-state"
 import { GameState } from "../types/game-state"
 import { Mine } from "../types/mine"
 
+const allDirections = [
+    { row: -1, column: -1 },
+    { row: -1, column: 0 },
+    { row: -1, column: 1 },
+    { row: 0, column: -1 },
+    { row: 0, column: 1 },
+    { row: 1, column: -1 },
+    { row: 1, column: 0 },
+    { row: 1, column: 1 }
+] as const
+
 export const buildGrid = (rowCount: number, columnCount: number) => {
     const cells: CellState[][] = []
     for (let row = 0; row < rowCount; row++) {
@@ -31,7 +42,15 @@ export const buildMines = (rowCount: number, columnCount: number, mineCount: num
 }
 
 export const isCellClickable = (gameState: GameState, row: number, column: number): boolean => {
-    return !gameState.isGameLost && gameState.cells[row][column].type === "hidden"
+    if (row < 0 || column < 0 || row >= gameState.rowCount || column >= gameState.columnCount) {
+        return false
+    }
+
+    if (gameState.isGameLost) {
+        return false
+    }
+
+    return gameState.cells.at(row)?.at(column)?.type === "hidden"
 }
 
 export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): GameState => {
@@ -47,9 +66,33 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
         }
     }
 
-    return {
-        ...gameState,
-        cells: updateGridCellImmutably(gameState.cells, row, column, { type: "revealed-safe", adjacentMines: countAdjacentMines(mines, row, column) })
+    const unCheckedCells = [{ row, column }]
+    let cellsSoFar = gameState.cells
+    while (true) {
+        const nextCellToCheck = unCheckedCells.pop()
+        if (nextCellToCheck === undefined) {
+            return { ...gameState, cells: cellsSoFar }
+        }
+
+        const adjacentMines = countAdjacentMines(mines, nextCellToCheck.row, nextCellToCheck.column)
+        cellsSoFar = updateGridCellImmutably(cellsSoFar, nextCellToCheck.row, nextCellToCheck.column, { type: "revealed-safe", adjacentMines })
+
+        if (adjacentMines !== 0) {
+            continue
+        }
+
+        const currentState = {
+            ...gameState,
+            cells: JSON.parse(JSON.stringify(cellsSoFar))
+        }
+
+        allDirections.forEach(direction => {
+            const newRow = nextCellToCheck.row + direction.row
+            const newColumn = nextCellToCheck.column + direction.column
+            if (isCellClickable(currentState, newRow, newColumn)) {
+                unCheckedCells.push({ row: newRow, column: newColumn })
+            }
+        })
     }
 }
 
