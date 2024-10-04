@@ -1,9 +1,9 @@
 import * as http from "http"
 import { Server as SocketIOServer } from "socket.io"
 import { createServer as createViteServer } from "vite"
-import { CellState } from "../types/cell-state"
 import { ClientToServerEvents } from "../types/client-to-server-events"
 import { ServerToClientEvents } from "../types/server-to-client-events"
+import { buildGrid, buildMines, revealCell } from "./game-logic"
 
 export const startServer = async () => {
     const vite = await createViteServer({
@@ -16,21 +16,24 @@ export const startServer = async () => {
     const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server)
 
     const gridSize = 20
-    const grid = {
+    const mines = buildMines(gridSize, gridSize, 40)
+
+    let gameState = {
         rowCount: gridSize,
         columnCount: gridSize,
-        cells: buildGrid(gridSize, gridSize)
+        cells: buildGrid(gridSize, gridSize),
+        isGameLost: false
     }
 
     io.on("connection", socket => {
         console.log("A user connected")
 
-        socket.emit("gridUpdated", grid)
+        socket.emit("gameStateUpdated", gameState)
 
         socket.on("clickCell", ({ row, column }) => {
-            console.log(`User clicked cell at row ${row} and column ${column}`)
+            gameState = revealCell(gameState, mines, row, column)
 
-            io.emit("gridUpdated", grid)
+            io.emit("gameStateUpdated", gameState)
         })
 
         socket.on("disconnect", () => {
@@ -41,16 +44,4 @@ export const startServer = async () => {
     server.listen(3000, () => {
         console.log("Server is running at http://localhost:3000")
     })
-}
-
-const buildGrid = (rowCount: number, columnCount: number) => {
-    const cells: CellState[][] = []
-    for (let row = 0; row < rowCount; row++) {
-        const row: CellState[] = []
-        for (let cell = 0; cell < columnCount; cell++) {
-            row.push({ type: "hidden", flagged: false })
-        }
-        cells.push(row)
-    }
-    return cells
 }

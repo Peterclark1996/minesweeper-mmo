@@ -1,12 +1,12 @@
 import { createContext, useContext, ReactNode, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import { ClientToServerEvents } from "./types/client-to-server-events"
-import { GridState } from "./types/grid-state"
+import { GameState } from "./types/game-state"
 import { ServerToClientEvents } from "./types/server-to-client-events"
 
 type loadedState = {
     status: "loaded"
-    grid: GridState
+    gameState: GameState
     clickCell: (row: number, column: number) => void
 }
 
@@ -21,7 +21,7 @@ type Props = {
 }
 
 export const ServerStateProvider = ({ children }: Props) => {
-    const [grid, setGrid] = useState<GridState>()
+    const [gameState, setGameState] = useState<GameState>()
     const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>()
 
     useEffect(() => {
@@ -29,7 +29,7 @@ export const ServerStateProvider = ({ children }: Props) => {
         setSocket(socket)
 
         socket.on("connect", () => {
-            socket.on("gridUpdated", setGrid)
+            socket.on("gameStateUpdated", setGameState)
         })
 
         return () => {
@@ -42,12 +42,12 @@ export const ServerStateProvider = ({ children }: Props) => {
     }
 
     const getValue = () => {
-        if (grid === undefined || socket === undefined) {
+        if (gameState === undefined || socket === undefined) {
             return loadingState
         }
         return {
             status: "loaded" as const,
-            grid: grid,
+            gameState,
             clickCell: onClickCell
         }
     }

@@ -1,5 +1,5 @@
-import { GridState } from "./grid-state"
+import { GameState } from "./game-state"
 
 export type ServerToClientEvents = {
-    gridUpdated: (updatedGrid: GridState) => void
+    gameStateUpdated: (updatedState: GameState) => void
 }
