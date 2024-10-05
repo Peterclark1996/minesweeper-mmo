@@ -1,4 +1,4 @@
 export type ClientToServerEvents = {
-    revealCell: (params: { row: number; column: number }) => void
-    flagCell: (params: { row: number; column: number }) => void
+    revealCell: (params: { gameId: string; row: number; column: number }) => void
+    flagCell: (params: { gameId: string; row: number; column: number }) => void
 }

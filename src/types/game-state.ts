@@ -2,6 +2,8 @@ import { CellState } from "./cell-state"
 import { Mine } from "./mine"
 
 export type GameState = {
+    gameId: string
+    nextReset: number
     rowCount: number
     columnCount: number
     cells: CellState[][]

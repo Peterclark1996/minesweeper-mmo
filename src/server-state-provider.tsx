@@ -45,8 +45,8 @@ export const ServerStateProvider = ({ children }: Props) => {
         return {
             status: "loaded" as const,
             gameState,
-            revealCell: (row, column) => socket?.emit("revealCell", { row, column }),
-            flagCell: (row, column) => socket?.emit("flagCell", { row, column })
+            revealCell: (row, column) => socket?.emit("revealCell", { gameId: gameState.gameId, row, column }),
+            flagCell: (row, column) => socket?.emit("flagCell", { gameId: gameState.gameId, row, column })
         }
     }
 

@@ -13,34 +13,6 @@ const allDirections = [
     { row: 1, column: 1 }
 ] as const
 
-export const buildGrid = (rowCount: number, columnCount: number) => {
-    const cells: CellState[][] = []
-    for (let row = 0; row < rowCount; row++) {
-        const row: CellState[] = []
-        for (let cell = 0; cell < columnCount; cell++) {
-            row.push({ type: "hidden", flagged: false })
-        }
-        cells.push(row)
-    }
-    return cells
-}
-
-export const buildMines = (rowCount: number, columnCount: number, mineCount: number): Mine[] => {
-    if (mineCount > rowCount * columnCount) {
-        throw new Error("Number of mines exceeds the number of cells")
-    }
-
-    const mines: Mine[] = []
-    while (mines.length < mineCount) {
-        const x = Math.floor(Math.random() * rowCount)
-        const y = Math.floor(Math.random() * columnCount)
-        if (!mines.some(mine => mine.x === x && mine.y === y)) {
-            mines.push({ x, y })
-        }
-    }
-    return mines
-}
-
 export const isCellClickable = (gameState: GameState, row: number, column: number): boolean => {
     if (row < 0 || column < 0 || row >= gameState.rowCount || column >= gameState.columnCount) {
         return false
