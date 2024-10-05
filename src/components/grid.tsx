@@ -22,7 +22,15 @@ export const Grid = () => {
                                 onFlag={() => server.flagCell(rowIndex, columnIndex)}
                             />
                         ) : (
-                            <RevealedCellTile key={columnIndex} state={cellState} />
+                            <RevealedCellTile
+                                key={columnIndex}
+                                state={cellState}
+                                wasMineThatLostTheGame={
+                                    server.gameState.finishState === "lost" &&
+                                    server.gameState.lostCell.row === rowIndex &&
+                                    server.gameState.lostCell.column === columnIndex
+                                }
+                            />
                         )
                     )}
                 </div>

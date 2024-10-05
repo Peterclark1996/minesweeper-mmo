@@ -76,7 +76,9 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
         return {
             ...gameState,
             cells: mines.reduce((cells, mine) => updateGridCellImmutably(cells, mine.x, mine.y, { type: "revealed-mine" }), gameState.cells),
-            finishState: "lost"
+            finishState: "lost",
+            mines,
+            lostCell: { row, column }
         }
     }
 

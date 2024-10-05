@@ -2,9 +2,10 @@ import { RevealedCell } from "../types/cell-state"
 
 type Props = {
     state: RevealedCell
+    wasMineThatLostTheGame: boolean
 }
 
-export const RevealedCellTile = ({ state }: Props) => {
+export const RevealedCellTile = ({ state, wasMineThatLostTheGame }: Props) => {
     const getContent = () => {
         if (state.type === "revealed-mine") {
             return "*"
@@ -42,5 +43,7 @@ export const RevealedCellTile = ({ state }: Props) => {
         return ""
     }
 
-    return <div className={`flex items-center justify-center bg-tile-mid size-8 border border-tile-dark ${getTextColour()}`}>{getContent()}</div>
+    const backgroundColour = wasMineThatLostTheGame ? "bg-three border-three" : "bg-tile-mid border-tile-dark"
+
+    return <div className={`flex items-center justify-center size-8 border  ${backgroundColour} ${getTextColour()}`}>{getContent()}</div>
 }

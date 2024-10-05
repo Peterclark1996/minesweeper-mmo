@@ -1,8 +1,15 @@
 import { CellState } from "./cell-state"
+import { Mine } from "./mine"
 
 export type GameState = {
     rowCount: number
     columnCount: number
     cells: CellState[][]
-    finishState: "won" | "lost" | "playing"
-}
+} & (
+    | { finishState: "playing" | "won" }
+    | {
+          finishState: "lost"
+          mines: Mine[]
+          lostCell: { row: number; column: number }
+      }
+)
