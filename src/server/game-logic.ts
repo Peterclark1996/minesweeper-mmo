@@ -46,8 +46,9 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
 
     if (mines.some(mine => mine.x === row && mine.y === column)) {
         const cellsWithRevealedMines = mines.reduce((cells, mine) => {
-            const cellAsMineLocation = cells.at(mine.x)?.at(mine.y)
-            if (cellAsMineLocation?.type === "hidden" && cellAsMineLocation.flagged) {
+            const cellAtMineLocation = cells.at(mine.x)?.at(mine.y)
+            const isMineAtClickedLocation = mine.x === row && mine.y === column
+            if (cellAtMineLocation?.type === "hidden" && cellAtMineLocation.flagged && !isMineAtClickedLocation) {
                 return cells
             }
 
