@@ -8,6 +8,7 @@ export default {
                 mid: "#d1d5db",
                 dark: "#9ca3af"
             },
+            black: "#000000",
             one: "#0000FF",
             two: "#008200",
             three: "#FF0000",

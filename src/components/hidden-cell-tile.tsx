@@ -18,7 +18,14 @@ export const HiddenCellTile = ({ state, onReveal, onFlag }: Props) => {
             onClick={onReveal}
             onContextMenu={onContextMenu}
         >
-            <div className="size-6 bg-tile-mid">{state.flagged ? "`" : ""}</div>
+            <div className="flex flex-col size-6 bg-tile-mid ">
+                <div className="h-3 w-6 relative overflow-hidden">
+                    <p className="size-6 text-three absolute top-0">{state.flagged ? "`" : ""}</p>
+                </div>
+                <div className="h-3 w-6 relative overflow-hidden">
+                    <p className="size-6 absolute bottom-0">{state.flagged ? "`" : ""}</p>
+                </div>
+            </div>
         </button>
     )
 }
