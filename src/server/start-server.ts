@@ -8,7 +8,7 @@ import { flagCell, revealCell } from "./game-logic"
 import { buildMines, buildGameState } from "./game-setup"
 
 const gridSize = 20
-const mineCount = 60
+const mineCount = 50
 let mines = buildMines(gridSize, gridSize, mineCount)
 let gameState = buildGameState(gridSize)
 
@@ -45,6 +45,12 @@ export const startServer = async () => {
             }
 
             io.emit("gameStateUpdated", gameState)
+        })
+
+        socket.on("requestUpdate", () => {
+            checkIfGameNeedsToBeReset()
+
+            socket.emit("gameStateUpdated", gameState)
         })
 
         socket.on("disconnect", () => {

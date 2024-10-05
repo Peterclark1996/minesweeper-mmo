@@ -1,22 +1,29 @@
 import moment from "moment"
 import { useEffect, useState } from "react"
+import { useServer } from "../server-state-provider"
 
-type Props = {
-    targetEpoch: number
-}
+export const Countdown = () => {
+    const server = useServer()
 
-export const Countdown = ({ targetEpoch }: Props) => {
     const [timeLeft, setTimeLeft] = useState<string>("")
 
     useEffect(() => {
+        let canCallForReset = true
+
         const intervalId = setInterval(() => {
             const now = moment()
-            const targetTime = moment(targetEpoch)
+            const targetTime = moment(server.gameState.nextReset)
             const duration = moment.duration(targetTime.diff(now))
 
             if (duration.asMilliseconds() <= 0) {
                 setTimeLeft("00:00:00")
                 clearInterval(intervalId)
+
+                setTimeout(() => {
+                    if (canCallForReset) {
+                        server.requestUpdate()
+                    }
+                }, getRandomDelay())
             } else {
                 const hours = Math.floor(duration.asHours())
                 const minutes = Math.floor(duration.minutes())
@@ -26,8 +33,17 @@ export const Countdown = ({ targetEpoch }: Props) => {
             }
         }, 1000)
 
-        return () => clearInterval(intervalId)
-    }, [targetEpoch])
+        return () => {
+            canCallForReset = false
+            clearInterval(intervalId)
+        }
+    }, [server])
 
     return <p>{timeLeft}</p>
+}
+
+const getRandomDelay = () => {
+    const min = 1000
+    const max = 5000
+    return Math.floor(Math.random() * (max - min + 1)) + min
 }

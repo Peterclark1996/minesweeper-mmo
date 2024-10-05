@@ -6,10 +6,6 @@ import { RevealedCellTile } from "./revealed-cell-tile"
 export const Grid = () => {
     const server = useServer()
 
-    if (server.status === "loading") {
-        return <div>Loading...</div>
-    }
-
     return (
         <div className="flex flex-col border border-tile-dark">
             {server.gameState.cells.map((row, rowIndex) => (

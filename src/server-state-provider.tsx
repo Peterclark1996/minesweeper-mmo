@@ -5,17 +5,13 @@ import { GameState } from "./types/game-state"
 import { ServerToClientEvents } from "./types/server-to-client-events"
 
 type loadedState = {
-    status: "loaded"
     gameState: GameState
     revealCell: (row: number, column: number) => void
     flagCell: (row: number, column: number) => void
+    requestUpdate: () => void
 }
 
-const loadingState = {
-    status: "loading" as const
-}
-
-const serverStateContext = createContext<loadedState | typeof loadingState>(loadingState)
+const serverStateContext = createContext<loadedState | undefined>(undefined)
 
 type Props = {
     children: ReactNode
@@ -38,19 +34,30 @@ export const ServerStateProvider = ({ children }: Props) => {
         }
     }, [])
 
-    const getValue = (): loadedState | typeof loadingState => {
-        if (gameState === undefined || socket === undefined) {
-            return loadingState
-        }
-        return {
-            status: "loaded" as const,
-            gameState,
-            revealCell: (row, column) => socket?.emit("revealCell", { gameId: gameState.gameId, row, column }),
-            flagCell: (row, column) => socket?.emit("flagCell", { gameId: gameState.gameId, row, column })
-        }
+    if (gameState === undefined || socket === undefined) {
+        return <div>Connecting...</div>
     }
 
-    return <serverStateContext.Provider value={getValue()}>{children}</serverStateContext.Provider>
+    return (
+        <serverStateContext.Provider
+            value={{
+                gameState,
+                revealCell: (row, column) => socket?.emit("revealCell", { gameId: gameState.gameId, row, column }),
+                flagCell: (row, column) => socket?.emit("flagCell", { gameId: gameState.gameId, row, column }),
+                requestUpdate: () => socket?.emit("requestUpdate")
+            }}
+        >
+            {children}
+        </serverStateContext.Provider>
+    )
 }
 
-export const useServer = () => useContext(serverStateContext)
+export const useServer = () => {
+    const context = useContext(serverStateContext)
+
+    if (!context) {
+        throw new Error("useServer must be used within a <ServerStateProvider />")
+    }
+
+    return context
+}
