@@ -5,7 +5,7 @@ import { useServer } from "../server-state-provider"
 export const Countdown = () => {
     const server = useServer()
 
-    const [timeLeft, setTimeLeft] = useState<string>("")
+    const [timeLeft, setTimeLeft] = useState<string>("00:00:00")
 
     useEffect(() => {
         let canCallForReset = true
@@ -43,7 +43,7 @@ export const Countdown = () => {
 }
 
 const getRandomDelay = () => {
-    const min = 1000
-    const max = 5000
+    const min = 0
+    const max = 3000
     return Math.floor(Math.random() * (max - min + 1)) + min
 }

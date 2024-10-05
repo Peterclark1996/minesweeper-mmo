@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
+import { Connecting } from "./components/connecting"
 import { ClientToServerEvents } from "./types/client-to-server-events"
 import { GameState } from "./types/game-state"
 import { ServerToClientEvents } from "./types/server-to-client-events"
@@ -35,7 +36,7 @@ export const ServerStateProvider = ({ children }: Props) => {
     }, [])
 
     if (gameState === undefined || socket === undefined) {
-        return <div>Connecting...</div>
+        return <Connecting />
     }
 
     return (
