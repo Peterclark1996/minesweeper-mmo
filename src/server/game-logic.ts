@@ -73,9 +73,18 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
     }
 
     if (mines.some(mine => mine.x === row && mine.y === column)) {
+        const cellsWithRevealedMines = mines.reduce((cells, mine) => {
+            const cellAsMineLocation = cells.at(mine.x)?.at(mine.y)
+            if (cellAsMineLocation?.type === "hidden" && cellAsMineLocation.flagged) {
+                return cells
+            }
+
+            return updateGridCellImmutably(cells, mine.x, mine.y, { type: "revealed-mine" })
+        }, gameState.cells)
+
         return {
             ...gameState,
-            cells: mines.reduce((cells, mine) => updateGridCellImmutably(cells, mine.x, mine.y, { type: "revealed-mine" }), gameState.cells),
+            cells: cellsWithRevealedMines,
             finishState: "lost",
             mines,
             lostCell: { row, column }
