@@ -4,7 +4,7 @@ import { createServer as createViteServer } from "vite"
 import { ClientToServerEvents } from "../types/client-to-server-events"
 import { GameState } from "../types/game-state"
 import { ServerToClientEvents } from "../types/server-to-client-events"
-import { buildGrid, buildMines, revealCell } from "./game-logic"
+import { buildGrid, buildMines, flagCell, revealCell } from "./game-logic"
 
 export const startServer = async () => {
     const vite = await createViteServer({
@@ -31,8 +31,14 @@ export const startServer = async () => {
 
         socket.emit("gameStateUpdated", gameState)
 
-        socket.on("clickCell", ({ row, column }) => {
+        socket.on("revealCell", ({ row, column }) => {
             gameState = revealCell(gameState, mines, row, column)
+
+            io.emit("gameStateUpdated", gameState)
+        })
+
+        socket.on("flagCell", ({ row, column }) => {
+            gameState = flagCell(gameState, row, column)
 
             io.emit("gameStateUpdated", gameState)
         })

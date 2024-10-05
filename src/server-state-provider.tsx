@@ -7,7 +7,8 @@ import { ServerToClientEvents } from "./types/server-to-client-events"
 type loadedState = {
     status: "loaded"
     gameState: GameState
-    clickCell: (row: number, column: number) => void
+    revealCell: (row: number, column: number) => void
+    flagCell: (row: number, column: number) => void
 }
 
 const loadingState = {
@@ -37,18 +38,15 @@ export const ServerStateProvider = ({ children }: Props) => {
         }
     }, [])
 
-    const onClickCell = (row: number, column: number) => {
-        socket?.emit("clickCell", { row, column })
-    }
-
-    const getValue = () => {
+    const getValue = (): loadedState | typeof loadingState => {
         if (gameState === undefined || socket === undefined) {
             return loadingState
         }
         return {
             status: "loaded" as const,
             gameState,
-            clickCell: onClickCell
+            revealCell: (row, column) => socket?.emit("revealCell", { row, column }),
+            flagCell: (row, column) => socket?.emit("flagCell", { row, column })
         }
     }
 

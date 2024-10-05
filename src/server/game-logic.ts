@@ -53,6 +53,20 @@ export const isCellClickable = (gameState: GameState, row: number, column: numbe
     return gameState.cells.at(row)?.at(column)?.type === "hidden"
 }
 
+export const flagCell = (gameState: GameState, row: number, column: number): GameState => {
+    if (!isCellClickable(gameState, row, column)) {
+        return gameState
+    }
+
+    const currentCell = gameState.cells.at(row)?.at(column)
+    if (currentCell?.type !== "hidden") {
+        return gameState
+    }
+
+    const cells = updateGridCellImmutably(gameState.cells, row, column, { type: "hidden", flagged: !currentCell?.flagged })
+    return { ...gameState, cells }
+}
+
 export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): GameState => {
     if (!isCellClickable(gameState, row, column)) {
         return gameState

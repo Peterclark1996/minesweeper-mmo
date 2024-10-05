@@ -1,3 +1,4 @@
 export type ClientToServerEvents = {
-    clickCell: (params: { row: number; column: number }) => void
+    revealCell: (params: { row: number; column: number }) => void
+    flagCell: (params: { row: number; column: number }) => void
 }

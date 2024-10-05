@@ -15,7 +15,12 @@ export const Grid = () => {
                 <div key={rowIndex} className="flex">
                     {row.map((cellState, columnIndex) =>
                         cellState.type === "hidden" ? (
-                            <HiddenCellTile key={columnIndex} state={cellState} onClick={() => server.clickCell(rowIndex, columnIndex)} />
+                            <HiddenCellTile
+                                key={columnIndex}
+                                state={cellState}
+                                onReveal={() => server.revealCell(rowIndex, columnIndex)}
+                                onFlag={() => server.flagCell(rowIndex, columnIndex)}
+                            />
                         ) : (
                             <RevealedCellTile key={columnIndex} state={cellState} />
                         )
