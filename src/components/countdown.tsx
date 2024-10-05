@@ -39,7 +39,7 @@ export const Countdown = () => {
         }
     }, [server])
 
-    return <p>{timeLeft}</p>
+    return <p className="w-24">{timeLeft}</p>
 }
 
 const getRandomDelay = () => {

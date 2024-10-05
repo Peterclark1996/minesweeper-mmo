@@ -3,12 +3,20 @@ import { CellState } from "../types/cell-state"
 import { GameState } from "../types/game-state"
 import { Mine } from "../types/mine"
 
-export const buildGameState = (gridSize: number): GameState => {
+export const buildGame = (gridSize: number, mineCount: number) => {
+    return {
+        gameState: buildGameState(gridSize, mineCount),
+        mines: buildMines(gridSize, gridSize, mineCount)
+    }
+}
+
+const buildGameState = (gridSize: number, mineCount: number): GameState => {
     const now = moment().add(1, "minute").startOf("minute")
 
     return {
         gameId: Math.random().toString(),
         nextReset: now.valueOf(),
+        mineCount,
         rowCount: gridSize,
         columnCount: gridSize,
         cells: buildGrid(gridSize, gridSize),
@@ -28,7 +36,7 @@ const buildGrid = (rowCount: number, columnCount: number) => {
     return cells
 }
 
-export const buildMines = (rowCount: number, columnCount: number, mineCount: number): Mine[] => {
+const buildMines = (rowCount: number, columnCount: number, mineCount: number): Mine[] => {
     if (mineCount > rowCount * columnCount) {
         throw new Error("Number of mines exceeds the number of cells")
     }

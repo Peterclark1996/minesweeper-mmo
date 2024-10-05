@@ -5,12 +5,13 @@ import { createServer as createViteServer } from "vite"
 import { ClientToServerEvents } from "../types/client-to-server-events"
 import { ServerToClientEvents } from "../types/server-to-client-events"
 import { flagCell, revealCell } from "./game-logic"
-import { buildMines, buildGameState } from "./game-setup"
+import { buildGame } from "./game-setup"
 
 const gridSize = 20
 const mineCount = 50
-let mines = buildMines(gridSize, gridSize, mineCount)
-let gameState = buildGameState(gridSize)
+const initialGame = buildGame(gridSize, mineCount)
+let mines = initialGame.mines
+let gameState = initialGame.gameState
 
 export const startServer = async () => {
     const vite = await createViteServer({
@@ -71,6 +72,7 @@ const checkIfGameNeedsToBeReset = () => {
 }
 
 const rebuildGame = () => {
-    mines = buildMines(gridSize, gridSize, mineCount)
-    gameState = buildGameState(gridSize)
+    const newGame = buildGame(gridSize, mineCount)
+    mines = newGame.mines
+    gameState = newGame.gameState
 }
