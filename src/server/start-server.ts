@@ -6,6 +6,7 @@ import { ClientToServerEvents } from "../types/client-to-server-events"
 import { ServerToClientEvents } from "../types/server-to-client-events"
 import { flagCell, revealCell } from "./game-logic"
 import { buildGame } from "./game-setup"
+import { generateId } from "./id-generator"
 
 const gridSize = 20
 const mineCount = 50
@@ -24,38 +25,49 @@ export const startServer = async () => {
     const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server)
 
     io.on("connection", socket => {
-        console.log("A user connected")
+        const player = generateId(socket.handshake.address)
+        console.log("A user connected: ", player)
 
-        socket.emit("gameStateUpdated", gameState)
+        socket.on("disconnect", () => {
+            console.log("A user disconnected: ", player)
+        })
+
+        if (player === undefined) {
+            return
+        }
+
+        socket.emit("gameStateUpdated", gameState, player)
 
         socket.on("revealCell", ({ gameId, row, column }) => {
-            checkIfGameNeedsToBeReset()
-
-            if (gameId === gameState.gameId) {
-                gameState = revealCell(gameState, mines, row, column)
+            if (hasGameExpired()) {
+                rebuildGame()
+            } else {
+                if (gameId === gameState.gameId) {
+                    gameState = revealCell(gameState, mines, row, column)
+                }
             }
 
-            io.emit("gameStateUpdated", gameState)
+            io.emit("gameStateUpdated", gameState, player)
         })
 
         socket.on("flagCell", ({ gameId, row, column }) => {
-            checkIfGameNeedsToBeReset()
-
-            if (gameId === gameState.gameId) {
-                gameState = flagCell(gameState, row, column)
+            if (hasGameExpired()) {
+                rebuildGame()
+            } else {
+                if (gameId === gameState.gameId) {
+                    gameState = flagCell(gameState, row, column)
+                }
             }
 
-            io.emit("gameStateUpdated", gameState)
+            io.emit("gameStateUpdated", gameState, player)
         })
 
         socket.on("requestUpdate", () => {
-            checkIfGameNeedsToBeReset()
+            if (hasGameExpired()) {
+                rebuildGame()
+            }
 
-            socket.emit("gameStateUpdated", gameState)
-        })
-
-        socket.on("disconnect", () => {
-            console.log("A user disconnected")
+            socket.emit("gameStateUpdated", gameState, player)
         })
     })
 
@@ -64,11 +76,9 @@ export const startServer = async () => {
     })
 }
 
-const checkIfGameNeedsToBeReset = () => {
+const hasGameExpired = () => {
     const now = moment()
-    if (now.isAfter(gameState.nextReset)) {
-        rebuildGame()
-    }
+    return now.isAfter(gameState.nextReset)
 }
 
 const rebuildGame = () => {

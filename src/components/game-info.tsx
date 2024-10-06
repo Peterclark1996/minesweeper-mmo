@@ -7,7 +7,7 @@ export const GameInfo = () => {
     const flags = server.gameState.cells.flat().filter(cell => cell.type === "hidden" && cell.flagged).length
 
     return (
-        <div className="flex text-xs gap-12 p-2">
+        <div className="flex text-xs gap-12">
             <span className="flex gap-4 ">
                 <p>Flagged Mines</p>
                 <p className="w-16">

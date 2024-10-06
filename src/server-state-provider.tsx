@@ -3,10 +3,12 @@ import { io, Socket } from "socket.io-client"
 import { Connecting } from "./components/connecting"
 import { ClientToServerEvents } from "./types/client-to-server-events"
 import { GameState } from "./types/game-state"
+import { Player } from "./types/player"
 import { ServerToClientEvents } from "./types/server-to-client-events"
 
 type loadedState = {
     gameState: GameState
+    player: Player
     revealCell: (row: number, column: number) => void
     flagCell: (row: number, column: number) => void
     requestUpdate: () => void
@@ -20,6 +22,7 @@ type Props = {
 
 export const ServerStateProvider = ({ children }: Props) => {
     const [gameState, setGameState] = useState<GameState>()
+    const [player, setPlayer] = useState<Player>()
     const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>()
 
     useEffect(() => {
@@ -27,7 +30,10 @@ export const ServerStateProvider = ({ children }: Props) => {
         setSocket(socket)
 
         socket.on("connect", () => {
-            socket.on("gameStateUpdated", setGameState)
+            socket.on("gameStateUpdated", (gameState, player) => {
+                setGameState(gameState)
+                setPlayer(player)
+            })
         })
 
         return () => {
@@ -35,7 +41,7 @@ export const ServerStateProvider = ({ children }: Props) => {
         }
     }, [])
 
-    if (gameState === undefined || socket === undefined) {
+    if (gameState === undefined || player === undefined || socket === undefined) {
         return <Connecting />
     }
 
@@ -43,6 +49,7 @@ export const ServerStateProvider = ({ children }: Props) => {
         <serverStateContext.Provider
             value={{
                 gameState,
+                player,
                 revealCell: (row, column) => socket?.emit("revealCell", { gameId: gameState.gameId, row, column }),
                 flagCell: (row, column) => socket?.emit("flagCell", { gameId: gameState.gameId, row, column }),
                 requestUpdate: () => socket?.emit("requestUpdate")

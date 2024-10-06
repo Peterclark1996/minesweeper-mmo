@@ -1,5 +1,6 @@
 import { GameState } from "./game-state"
+import { Player } from "./player"
 
 export type ServerToClientEvents = {
-    gameStateUpdated: (updatedState: GameState) => void
+    gameStateUpdated: (updatedState: GameState, currentPlayer: Player) => void
 }
