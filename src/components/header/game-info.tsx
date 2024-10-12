@@ -1,5 +1,5 @@
-import { useServer } from "../server-state-provider"
-import { Countdown } from "./header/countdown"
+import { useServer } from "../../server-state-provider"
+import { Countdown } from "./countdown"
 
 export const GameInfo = () => {
     const server = useServer()

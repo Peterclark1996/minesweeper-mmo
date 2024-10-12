@@ -1,5 +1,5 @@
 import { useServer } from "../server-state-provider"
-import { CellTile } from "./cell-tile"
+import { CellTile } from "./cell-tile/cell-tile"
 
 export const Grid = () => {
     const server = useServer()

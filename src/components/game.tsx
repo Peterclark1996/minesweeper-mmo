@@ -1,7 +1,7 @@
-import { GameInfo } from "./game-info"
 import { Grid } from "./grid"
+import { GameInfo } from "./header/game-info"
+import { Title } from "./header/title"
 import { Players } from "./players-panel/players"
-import { Title } from "./title"
 
 export const Game = () => {
     return (

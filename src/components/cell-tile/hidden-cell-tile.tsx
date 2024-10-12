@@ -1,4 +1,4 @@
-import { HiddenCell } from "../types/cell-state"
+import { HiddenCell } from "../../types/cell-state"
 
 type Props = {
     state: HiddenCell
