@@ -1,4 +1,4 @@
-import { useServer } from "../../server-state-provider"
+import { useServer } from "../server-state-provider"
 import { PlayerCard } from "./player-card"
 
 export const Players = () => {

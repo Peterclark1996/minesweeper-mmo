@@ -1,8 +1,8 @@
 import moment from "moment"
 import { useEffect, useRef } from "react"
-import { useServer } from "../../server-state-provider"
 import { GameState } from "../../types/game-state"
-import { CellTile } from "../cell-tile/cell-tile"
+import { CellTile } from "../grid-panel/cell-tile"
+import { useServer } from "../server-state-provider"
 
 type Props = {
     history: GameState["history"][number]

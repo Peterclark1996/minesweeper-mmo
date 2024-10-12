@@ -1,6 +1,6 @@
 import moment from "moment"
 import { useEffect, useState } from "react"
-import { useServer } from "../../server-state-provider"
+import { useServer } from "../server-state-provider"
 
 export const Countdown = () => {
     const server = useServer()

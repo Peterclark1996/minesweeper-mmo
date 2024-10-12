@@ -1,8 +1,8 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Game } from "./components/game.tsx"
+import { ServerStateProvider } from "./components/server-state-provider.tsx"
 import "./index.css"
-import { ServerStateProvider } from "./server-state-provider.tsx"
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>

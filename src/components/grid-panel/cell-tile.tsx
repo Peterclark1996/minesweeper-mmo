@@ -1,5 +1,5 @@
-import { useServer } from "../../server-state-provider"
 import { CellState } from "../../types/cell-state"
+import { useServer } from "../server-state-provider"
 import { HiddenCellTile } from "./hidden-cell-tile"
 import { IncorrectFlagCellTile } from "./incorrect-flag-cell-tile"
 import { RevealedCellTile } from "./revealed-cell-tile"

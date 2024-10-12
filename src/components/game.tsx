@@ -1,4 +1,4 @@
-import { Grid } from "./grid"
+import { Grid } from "./grid-panel/grid"
 import { GameInfo } from "./header/game-info"
 import { Title } from "./header/title"
 import { Players } from "./players-panel/players"
