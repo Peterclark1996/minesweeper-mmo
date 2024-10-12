@@ -37,7 +37,10 @@ export const flagCell = (gameState: GameState, row: number, column: number): Act
 }
 
 export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): ActionResult => {
-    if (!isCellClickable(gameState, row, column)) {
+    const clickedCell = gameState.cells.at(row)?.at(column)
+    const isCellFlagged = clickedCell?.type === "hidden" && clickedCell.flagged
+
+    if (!isCellClickable(gameState, row, column) || isCellFlagged) {
         return {
             updatedGameState: gameState,
             rowClicked: row,
