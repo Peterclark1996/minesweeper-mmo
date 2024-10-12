@@ -1,5 +1,6 @@
 import { CellState } from "./cell-state"
 import { Mine } from "./mine"
+import { Player } from "./player"
 
 export type GameState = {
     gameId: string
@@ -8,6 +9,12 @@ export type GameState = {
     rowCount: number
     columnCount: number
     cells: CellState[][]
+    history: {
+        player: Player
+        rowClicked: number
+        columnClicked: number
+        time: number
+    }[]
 } & (
     | { finishState: "playing" | "won" }
     | {

@@ -20,7 +20,8 @@ const buildGameState = (gridSize: number, mineCount: number): GameState => {
         rowCount: gridSize,
         columnCount: gridSize,
         cells: buildGrid(gridSize, gridSize),
-        finishState: "playing"
+        finishState: "playing",
+        history: []
     }
 }
 

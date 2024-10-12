@@ -3,6 +3,7 @@ import moment from "moment"
 import { Server as SocketIOServer } from "socket.io"
 import { createServer as createViteServer } from "vite"
 import { ClientToServerEvents } from "../types/client-to-server-events"
+import { GameState } from "../types/game-state"
 import { ServerToClientEvents } from "../types/server-to-client-events"
 import { flagCell, revealCell } from "./game-logic"
 import { buildGame } from "./game-setup"
@@ -38,29 +39,45 @@ export const startServer = async () => {
 
         socket.emit("gameStateUpdated", gameState, player)
 
-        socket.on("revealCell", ({ gameId, row, column }) => {
+        const attemptPlayerAction = (gameId: string, actionF: () => GameState) => {
             if (hasGameExpired()) {
                 rebuildGame()
             } else {
                 if (gameId === gameState.gameId) {
-                    gameState = revealCell(gameState, mines, row, column)
+                    const updatedGameState = actionF()
+                    gameState = updatedGameState
                 }
             }
 
             io.emit("gameStateUpdated", gameState, player)
-        })
+        }
 
-        socket.on("flagCell", ({ gameId, row, column }) => {
-            if (hasGameExpired()) {
-                rebuildGame()
-            } else {
-                if (gameId === gameState.gameId) {
-                    gameState = flagCell(gameState, row, column)
+        const withHistory = (row: number, column: number, actionF: () => GameState) => () => ({
+            ...actionF(),
+            history: [
+                ...gameState.history,
+                {
+                    player,
+                    rowClicked: row,
+                    columnClicked: column,
+                    time: moment().valueOf()
                 }
-            }
-
-            io.emit("gameStateUpdated", gameState, player)
+            ]
         })
+
+        socket.on("revealCell", ({ gameId, row, column }) =>
+            attemptPlayerAction(
+                gameId,
+                withHistory(row, column, () => revealCell(gameState, mines, row, column))
+            )
+        )
+
+        socket.on("flagCell", ({ gameId, row, column }) =>
+            attemptPlayerAction(
+                gameId,
+                withHistory(row, column, () => flagCell(gameState, row, column))
+            )
+        )
 
         socket.on("requestUpdate", () => {
             if (hasGameExpired()) {

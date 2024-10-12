@@ -2,29 +2,6 @@ import { CellState } from "../types/cell-state"
 import { GameState } from "../types/game-state"
 import { Mine } from "../types/mine"
 
-const allDirections = [
-    { row: -1, column: -1 },
-    { row: -1, column: 0 },
-    { row: -1, column: 1 },
-    { row: 0, column: -1 },
-    { row: 0, column: 1 },
-    { row: 1, column: -1 },
-    { row: 1, column: 0 },
-    { row: 1, column: 1 }
-] as const
-
-export const isCellClickable = (gameState: GameState, row: number, column: number): boolean => {
-    if (row < 0 || column < 0 || row >= gameState.rowCount || column >= gameState.columnCount) {
-        return false
-    }
-
-    if (gameState.finishState !== "playing") {
-        return false
-    }
-
-    return gameState.cells.at(row)?.at(column)?.type === "hidden"
-}
-
 export const flagCell = (gameState: GameState, row: number, column: number): GameState => {
     if (!isCellClickable(gameState, row, column)) {
         return gameState
@@ -81,7 +58,7 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
 
         const currentState = {
             ...gameState,
-            cells: JSON.parse(JSON.stringify(cellsSoFar))
+            cells: cellsSoFar
         }
 
         allDirections.forEach(direction => {
@@ -92,6 +69,29 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
             }
         })
     }
+}
+
+const allDirections = [
+    { row: -1, column: -1 },
+    { row: -1, column: 0 },
+    { row: -1, column: 1 },
+    { row: 0, column: -1 },
+    { row: 0, column: 1 },
+    { row: 1, column: -1 },
+    { row: 1, column: 0 },
+    { row: 1, column: 1 }
+] as const
+
+const isCellClickable = (gameState: GameState, row: number, column: number): boolean => {
+    if (row < 0 || column < 0 || row >= gameState.rowCount || column >= gameState.columnCount) {
+        return false
+    }
+
+    if (gameState.finishState !== "playing") {
+        return false
+    }
+
+    return gameState.cells.at(row)?.at(column)?.type === "hidden"
 }
 
 const checkIfGameIsWon = (gameState: GameState, mines: Mine[]): GameState => {

@@ -1,6 +1,6 @@
 import { GameInfo } from "./components/game-info"
 import { Grid } from "./components/grid"
-import { Players } from "./components/players"
+import { Players } from "./components/players-panel/players"
 import { Title } from "./components/title"
 
 export const Game = () => {
@@ -11,9 +11,7 @@ export const Game = () => {
             <div className="flex w-full">
                 <div className="flex-1" />
                 <Grid />
-                <div className="flex-1">
-                    <Players />
-                </div>
+                <Players />
             </div>
         </main>
     )
