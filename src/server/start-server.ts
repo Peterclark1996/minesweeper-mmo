@@ -86,7 +86,7 @@ const withHistory =
     () => {
         const actionResult = actionF()
 
-        if (!actionResult.actionWasSuccessful) {
+        if (!actionResult.actionWasSuccessful || actionResult.revealedCell === undefined) {
             return actionResult
         }
 
@@ -98,6 +98,7 @@ const withHistory =
                     player,
                     rowClicked: actionResult.rowClicked,
                     columnClicked: actionResult.columnClicked,
+                    cellStateAfterClick: actionResult.revealedCell,
                     time: moment().valueOf()
                 }
             ]

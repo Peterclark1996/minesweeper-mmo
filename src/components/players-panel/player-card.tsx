@@ -1,6 +1,7 @@
 import moment from "moment"
 import { useServer } from "../../server-state-provider"
 import { GameState } from "../../types/game-state"
+import { CellTile } from "../cell-tile"
 
 type Props = {
     history: GameState["history"][number]
@@ -19,11 +20,12 @@ export const PlayerCard = ({ history }: Props) => {
                 </span>
                 {server.player.id === history.player.id && <p className="text-[0.5rem] text-two p-1">You</p>}
             </span>
-            <span className="flex gap-2 justify-center items-center text-[0.5rem]">
-                <p>Row</p>
-                <p>{history.rowClicked}</p>
-                <p>Column</p>
-                <p>{history.columnClicked}</p>
+            <span className="flex gap-2 justify-center items-center">
+                <p className="text-[0.5rem]">Row</p>
+                <p className="text-[0.5rem]">{history.rowClicked}</p>
+                <p className="text-[0.5rem]">Column</p>
+                <p className="text-[0.5rem]">{history.columnClicked}</p>
+                <CellTile cellState={history.cellStateAfterClick} rowIndex={history.rowClicked} columnIndex={history.columnClicked} />
             </span>
         </li>
     )

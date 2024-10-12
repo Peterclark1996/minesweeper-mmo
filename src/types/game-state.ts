@@ -13,6 +13,7 @@ export type GameState = {
         player: Player
         rowClicked: number
         columnClicked: number
+        cellStateAfterClick: CellState
         time: number
     }[]
 } & (
