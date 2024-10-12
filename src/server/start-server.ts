@@ -2,8 +2,9 @@ import * as http from "http"
 import moment from "moment"
 import { Server as SocketIOServer } from "socket.io"
 import { createServer as createViteServer } from "vite"
+import { ActionResult } from "../types/action-result"
 import { ClientToServerEvents } from "../types/client-to-server-events"
-import { GameState } from "../types/game-state"
+import { Player } from "../types/player"
 import { ServerToClientEvents } from "../types/server-to-client-events"
 import { flagCell, revealCell } from "./game-logic"
 import { buildGame } from "./game-setup"
@@ -39,43 +40,30 @@ export const startServer = async () => {
 
         socket.emit("gameStateUpdated", gameState, player)
 
-        const attemptPlayerAction = (gameId: string, actionF: () => GameState) => {
+        const attemptPlayerAction = (gameId: string, actionF: () => ActionResult) => {
             if (hasGameExpired()) {
                 rebuildGame()
             } else {
                 if (gameId === gameState.gameId) {
-                    const updatedGameState = actionF()
-                    gameState = updatedGameState
+                    const actionResult = actionF()
+                    gameState = actionResult.updatedGameState
                 }
             }
 
             io.emit("gameStateUpdated", gameState, player)
         }
 
-        const withHistory = (row: number, column: number, actionF: () => GameState) => () => ({
-            ...actionF(),
-            history: [
-                ...gameState.history,
-                {
-                    player,
-                    rowClicked: row,
-                    columnClicked: column,
-                    time: moment().valueOf()
-                }
-            ]
-        })
-
         socket.on("revealCell", ({ gameId, row, column }) =>
             attemptPlayerAction(
                 gameId,
-                withHistory(row, column, () => revealCell(gameState, mines, row, column))
+                withHistory(player, () => revealCell(gameState, mines, row, column))
             )
         )
 
         socket.on("flagCell", ({ gameId, row, column }) =>
             attemptPlayerAction(
                 gameId,
-                withHistory(row, column, () => flagCell(gameState, row, column))
+                withHistory(player, () => flagCell(gameState, row, column))
             )
         )
 
@@ -92,6 +80,34 @@ export const startServer = async () => {
         console.log("Server is running at http://localhost:3000")
     })
 }
+
+const withHistory =
+    (player: Player, actionF: () => ActionResult): (() => ActionResult) =>
+    () => {
+        const actionResult = actionF()
+
+        if (!actionResult.actionWasSuccessful) {
+            return actionResult
+        }
+
+        const updatedGameState = {
+            ...actionResult.updatedGameState,
+            history: [
+                ...gameState.history,
+                {
+                    player,
+                    rowClicked: actionResult.rowClicked,
+                    columnClicked: actionResult.columnClicked,
+                    time: moment().valueOf()
+                }
+            ]
+        }
+
+        return {
+            ...actionResult,
+            updatedGameState
+        }
+    }
 
 const hasGameExpired = () => {
     const now = moment()

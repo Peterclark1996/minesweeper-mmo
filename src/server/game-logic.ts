@@ -1,24 +1,50 @@
+import { ActionResult } from "../types/action-result"
 import { CellState } from "../types/cell-state"
 import { GameState } from "../types/game-state"
 import { Mine } from "../types/mine"
 
-export const flagCell = (gameState: GameState, row: number, column: number): GameState => {
+export const flagCell = (gameState: GameState, row: number, column: number): ActionResult => {
     if (!isCellClickable(gameState, row, column)) {
-        return gameState
+        return {
+            updatedGameState: gameState,
+            rowClicked: row,
+            columnClicked: column,
+            actionWasSuccessful: false,
+            revealedCell: gameState.cells.at(row)?.at(column)
+        }
     }
 
     const currentCell = gameState.cells.at(row)?.at(column)
     if (currentCell?.type !== "hidden") {
-        return gameState
+        return {
+            updatedGameState: gameState,
+            rowClicked: row,
+            columnClicked: column,
+            actionWasSuccessful: false,
+            revealedCell: currentCell
+        }
     }
 
     const cells = updateGridCellImmutably(gameState.cells, row, column, { type: "hidden", flagged: !currentCell?.flagged })
-    return { ...gameState, cells }
+    const updatedGameState = { ...gameState, cells }
+    return {
+        updatedGameState,
+        rowClicked: row,
+        columnClicked: column,
+        actionWasSuccessful: true,
+        revealedCell: cells.at(row)?.at(column)
+    }
 }
 
-export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): GameState => {
+export const revealCell = (gameState: GameState, mines: Mine[], row: number, column: number): ActionResult => {
     if (!isCellClickable(gameState, row, column)) {
-        return gameState
+        return {
+            updatedGameState: gameState,
+            rowClicked: row,
+            columnClicked: column,
+            actionWasSuccessful: false,
+            revealedCell: gameState.cells.at(row)?.at(column)
+        }
     }
 
     if (mines.some(mine => mine.x === row && mine.y === column)) {
@@ -32,12 +58,20 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
             return updateGridCellImmutably(cells, mine.x, mine.y, { type: "revealed-mine" })
         }, gameState.cells)
 
-        return {
+        const updatedGameState = {
             ...gameState,
             cells: cellsWithRevealedMines,
-            finishState: "lost",
+            finishState: "lost" as const,
             mines,
             lostCell: { row, column }
+        }
+
+        return {
+            updatedGameState,
+            rowClicked: row,
+            columnClicked: column,
+            actionWasSuccessful: true,
+            revealedCell: cellsWithRevealedMines.at(row)?.at(column)
         }
     }
 
@@ -46,7 +80,14 @@ export const revealCell = (gameState: GameState, mines: Mine[], row: number, col
     while (true) {
         const nextCellToCheck = unCheckedCells.pop()
         if (nextCellToCheck === undefined) {
-            return checkIfGameIsWon({ ...gameState, cells: cellsSoFar }, mines)
+            const updatedGameState = checkIfGameIsWon({ ...gameState, cells: cellsSoFar }, mines)
+            return {
+                updatedGameState,
+                rowClicked: row,
+                columnClicked: column,
+                actionWasSuccessful: true,
+                revealedCell: cellsSoFar.at(row)?.at(column)
+            }
         }
 
         const adjacentMines = countAdjacentMines(mines, nextCellToCheck.row, nextCellToCheck.column)
