@@ -1,4 +1,5 @@
 import moment from "moment"
+import { useEffect, useRef } from "react"
 import { useServer } from "../../server-state-provider"
 import { GameState } from "../../types/game-state"
 import { CellTile } from "../cell-tile"
@@ -10,8 +11,14 @@ type Props = {
 export const PlayerCard = ({ history }: Props) => {
     const server = useServer()
 
+    const ref = useRef<HTMLLIElement>(null)
+
+    useEffect(() => {
+        ref.current?.scrollIntoView({ behavior: "smooth" })
+    }, [])
+
     return (
-        <li className="flex flex-col gap-2 pb-2 bg-tile-light">
+        <li ref={ref} className="flex flex-col gap-2 pb-2 bg-tile-light">
             <span className="flex justify-between">
                 <p className=" text-[0.5rem] text-one p-1">{moment(history.time).format("HH:mm")}</p>
                 <span className="flex gap-2 justify-center items-center">

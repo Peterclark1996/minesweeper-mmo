@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { Game } from "./game.tsx"
+import { Game } from "./components/game.tsx"
 import "./index.css"
 import { ServerStateProvider } from "./server-state-provider.tsx"
 
