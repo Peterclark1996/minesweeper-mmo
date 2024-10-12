@@ -6,7 +6,10 @@ export default {
             tile: {
                 light: "#e5e7eb",
                 mid: "#d1d5db",
-                dark: "#9ca3af"
+                dark: "#9ca3af",
+                red: "#F7C8E0",
+                blue: "#B4E4FF",
+                green: "#DFFFD8"
             },
             black: "#000000",
             one: "#0000FF",

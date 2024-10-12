@@ -10,7 +10,7 @@ export const Players = () => {
         <div className="flex-1 h-0 min-h-full overflow-y-scroll">
             <ol className="flex flex-col px-4 gap-4">
                 {sortedHistory.map((history, index) => (
-                    <PlayerCard key={index} history={history} />
+                    <PlayerCard key={index} history={history} isLastUpdate={index == sortedHistory.length - 1} />
                 ))}
             </ol>
         </div>

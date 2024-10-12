@@ -6,9 +6,10 @@ import { useServer } from "../server-state-provider"
 
 type Props = {
     history: GameState["history"][number]
+    isLastUpdate: boolean
 }
 
-export const PlayerCard = ({ history }: Props) => {
+export const PlayerCard = ({ history, isLastUpdate }: Props) => {
     const server = useServer()
 
     const ref = useRef<HTMLLIElement>(null)
@@ -17,8 +18,24 @@ export const PlayerCard = ({ history }: Props) => {
         ref.current?.scrollIntoView({ behavior: "smooth" })
     }, [])
 
+    const getBackgroundColor = () => {
+        if (isLastUpdate && server.gameState.finishState === "won") {
+            return "bg-tile-green"
+        }
+
+        if (isLastUpdate && server.gameState.finishState === "lost") {
+            return "bg-tile-red"
+        }
+
+        if (history.cellStateAfterClick.type === "revealed-safe" && history.cellStateAfterClick.adjacentMines === 0) {
+            return "bg-tile-blue"
+        }
+
+        return "bg-tile-light"
+    }
+
     return (
-        <li ref={ref} className="flex flex-col gap-2 pb-2 bg-tile-light">
+        <li ref={ref} className={`flex flex-col gap-2 pb-2 ${getBackgroundColor()}`}>
             <span className="flex justify-between">
                 <p className=" text-[0.5rem] text-one p-1">{moment(history.time).format("HH:mm")}</p>
                 <span className="flex gap-2 justify-center items-center">
