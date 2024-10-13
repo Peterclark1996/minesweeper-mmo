@@ -35,7 +35,10 @@ export const startServer = async () => {
     const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server)
 
     io.on("connection", socket => {
-        const player = generateId(socket.handshake.address)
+        const address = socket.handshake.address
+        const forwardedFor = [socket.handshake?.headers["x-forwarded-for"]].flat()[0]?.split(",")[0]
+
+        const player = generateId(address ?? forwardedFor)
         console.log("A user connected: ", player)
 
         socket.on("disconnect", () => {
@@ -87,7 +90,7 @@ export const startServer = async () => {
         })
     })
 
-    server.listen(8080, () => {
+    server.listen(8080, "0.0.0.0", () => {
         console.log(`Server is running in '${environment}' mode at http://localhost:8080`)
     })
 }
