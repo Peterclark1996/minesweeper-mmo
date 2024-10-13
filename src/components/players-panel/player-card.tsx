@@ -7,9 +7,10 @@ import { useServer } from "../server-state-provider"
 type Props = {
     history: GameState["history"][number]
     isLastUpdate: boolean
+    onHistoryHovered: (history: GameState["history"][number] | undefined) => void
 }
 
-export const PlayerCard = ({ history, isLastUpdate }: Props) => {
+export const PlayerCard = ({ history, isLastUpdate, onHistoryHovered }: Props) => {
     const server = useServer()
 
     const ref = useRef<HTMLLIElement>(null)
@@ -35,7 +36,12 @@ export const PlayerCard = ({ history, isLastUpdate }: Props) => {
     }
 
     return (
-        <li ref={ref} className={`flex flex-col gap-2 pb-2 ${getBackgroundColor()}`}>
+        <li
+            ref={ref}
+            className={`flex flex-col gap-2 pb-2 ${getBackgroundColor()}`}
+            onMouseEnter={() => onHistoryHovered(history)}
+            onMouseLeave={() => onHistoryHovered(undefined)}
+        >
             <span className="flex justify-between">
                 <p className=" text-[0.5rem] text-one p-1">{moment(history.time).format("HH:mm")}</p>
                 <span className="flex gap-2 justify-center items-center">

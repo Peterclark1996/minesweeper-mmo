@@ -1,17 +1,21 @@
+import { useState } from "react"
+import { GameState } from "../types/game-state"
 import { Grid } from "./grid-panel/grid"
 import { GameInfo } from "./header/game-info"
 import { Title } from "./header/title"
 import { Players } from "./players-panel/players"
 
 export const Game = () => {
+    const [currentlyHoveredHistory, setCurrentlyHoveredHistory] = useState<GameState["history"][number]>()
+
     return (
         <main className="flex flex-col items-center gap-2 h-screen">
             <Title />
             <GameInfo />
             <div className="flex w-full">
                 <div className="flex-1" />
-                <Grid />
-                <Players />
+                <Grid currentlyHoveredHistory={currentlyHoveredHistory} />
+                <Players onHistoryHovered={setCurrentlyHoveredHistory} />
             </div>
         </main>
     )
