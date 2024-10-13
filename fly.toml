@@ -10,6 +10,7 @@ primary_region = 'iad'
 
 [env]
   PORT = '8080'
+  NODE_ENV = 'production'
 
 [http_service]
   internal_port = 8080
@@ -20,6 +21,6 @@ primary_region = 'iad'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
+  memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
