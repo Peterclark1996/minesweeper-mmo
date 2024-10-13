@@ -11,7 +11,7 @@ import { buildGame } from "./game-setup"
 import { generateId } from "./id-generator"
 
 const gridSize = 20
-const mineCount = 50
+const mineCount = 60
 const initialGame = buildGame(gridSize, mineCount)
 let mines = initialGame.mines
 let gameState = initialGame.gameState

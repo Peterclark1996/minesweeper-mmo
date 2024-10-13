@@ -11,7 +11,7 @@ export const buildGame = (gridSize: number, mineCount: number) => {
 }
 
 const buildGameState = (gridSize: number, mineCount: number): GameState => {
-    const now = moment().add(1, "minute").startOf("minute")
+    const now = moment().add(1, "day").startOf("day")
 
     return {
         gameId: Math.random().toString(),
