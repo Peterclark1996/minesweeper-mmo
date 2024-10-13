@@ -2,7 +2,6 @@ import * as http from "http"
 import moment from "moment"
 import handler from "serve-handler"
 import { Server as SocketIOServer } from "socket.io"
-import { createServer as createViteServer } from "vite"
 import { ActionResult } from "../types/action-result"
 import { ClientToServerEvents } from "../types/client-to-server-events"
 import { Player } from "../types/player"
@@ -22,6 +21,7 @@ let gameState = initialGame.gameState
 export const startServer = async () => {
     const server = http.createServer()
     if (environment === "development") {
+        const { createServer: createViteServer } = await import("vite")
         const vite = await createViteServer({
             server: { middlewareMode: true }
         })

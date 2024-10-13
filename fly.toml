@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for minesweeper-mmo on 2024-10-13T20:13:38Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'minesweeper-mmo'
+primary_region = 'iad'
+
+[build]
+
+[env]
+  PORT = '8080'
+  NODE_ENV = 'production'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
