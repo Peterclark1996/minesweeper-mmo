@@ -1,5 +1,6 @@
 import * as http from "http"
 import moment from "moment"
+import handler from "serve-handler"
 import { Server as SocketIOServer } from "socket.io"
 import { createServer as createViteServer } from "vite"
 import { ActionResult } from "../types/action-result"
@@ -10,6 +11,8 @@ import { flagCell, revealCell } from "./game-logic"
 import { buildGame } from "./game-setup"
 import { generateId } from "./id-generator"
 
+const environment = process.env.NODE_ENV ?? "development"
+
 const gridSize = 20
 const mineCount = 60
 const initialGame = buildGame(gridSize, mineCount)
@@ -17,12 +20,17 @@ let mines = initialGame.mines
 let gameState = initialGame.gameState
 
 export const startServer = async () => {
-    const vite = await createViteServer({
-        server: { middlewareMode: true }
-    })
-
     const server = http.createServer()
-    server.on("request", vite.middlewares)
+    if (environment === "development") {
+        const vite = await createViteServer({
+            server: { middlewareMode: true }
+        })
+        server.on("request", vite.middlewares)
+    } else {
+        server.on("request", (req, res) => {
+            return handler(req, res, { public: "dist" })
+        })
+    }
 
     const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server)
 
@@ -80,7 +88,7 @@ export const startServer = async () => {
     })
 
     server.listen(3000, () => {
-        console.log("Server is running at http://localhost:3000")
+        console.log(`Server is running in '${environment}' mode at http://localhost:3000`)
     })
 }
 
