@@ -44,7 +44,10 @@ export const startServer = async () => {
             if (hasGameExpired()) {
                 rebuildGame()
             } else {
-                if (gameId === gameState.gameId) {
+                const isCorrectGame = gameId === gameState.gameId
+                const hasPlayerAlreadyClicked = gameState.history.find(history => history.player.id === player.id) !== undefined
+
+                if (isCorrectGame && !hasPlayerAlreadyClicked) {
                     const actionResult = actionF()
                     gameState = actionResult.updatedGameState
                 }
