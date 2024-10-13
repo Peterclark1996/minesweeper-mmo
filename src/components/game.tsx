@@ -3,6 +3,7 @@ import { GameState } from "../types/game-state"
 import { Grid } from "./grid-panel/grid"
 import { GameInfo } from "./header/game-info"
 import { Title } from "./header/title"
+import { InstructionsPanel } from "./instructions-panel"
 import { Players } from "./players-panel/players"
 
 export const Game = () => {
@@ -13,7 +14,7 @@ export const Game = () => {
             <Title />
             <GameInfo />
             <div className="flex w-full">
-                <div className="flex-1" />
+                <InstructionsPanel />
                 <Grid currentlyHoveredHistory={currentlyHoveredHistory} />
                 <Players onHistoryHovered={setCurrentlyHoveredHistory} />
             </div>
